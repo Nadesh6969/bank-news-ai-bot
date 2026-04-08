@@ -10,7 +10,6 @@ UOB announces partnership with fintech startup for real-time payments.
 """
 
 def summarize(text):
-    """Call OpenRouter API to summarize banking news."""
     try:
         response = requests.post(
             "https://openrouter.ai/api/v1/chat/completions",
@@ -21,10 +20,8 @@ def summarize(text):
             json={
                 "model": "gpt-4o-mini",
                 "messages": [
-                    {
-                        "role": "user",
-                        "content": f"Summarize this banking news into 1-2 short tweetable sentences:\n{text}"
-                    }
+                    {"role": "user",
+                     "content": f"Summarize this banking news into 1-2 short tweetable sentences:\n{text}"}
                 ]
             }
         )
@@ -32,7 +29,7 @@ def summarize(text):
         if "choices" in data:
             return data["choices"][0]["message"]["content"]
         else:
-            print("❌ AI API returned an error or unexpected response:")
+            print("❌ AI API returned an error:")
             print(data)
             return "Error: Could not generate summary"
     except Exception as e:
@@ -40,24 +37,22 @@ def summarize(text):
         return "Error: Could not generate summary"
 
 def post_to_x(message):
-    """Post a tweet using Tweepy (OAuth 1.0a User Context)."""
+    # OAuth 1.0a authentication
+    auth = tweepy.OAuth1UserHandler(
+        os.environ["TWITTER_API_KEY"],
+        os.environ["TWITTER_API_SECRET"],
+        os.environ["TWITTER_ACCESS_TOKEN"],
+        os.environ["TWITTER_ACCESS_TOKEN_SECRET"]
+    )
+    api = tweepy.API(auth)
     try:
-        client = tweepy.Client(
-            consumer_key=os.environ["TWITTER_API_KEY"],
-            consumer_secret=os.environ["TWITTER_API_SECRET"],
-            access_token=os.environ["TWITTER_ACCESS_TOKEN"],
-            access_token_secret=os.environ["TWITTER_ACCESS_TOKEN_SECRET"]
-        )
-        client.create_tweet(text=message)
+        api.update_status(message)
         print("✅ Tweet posted successfully!")
     except Exception as e:
         print("❌ Failed to post tweet:", e)
 
-if __name__ == "__main__":
-    # Step 1: Summarize the news
-    summary = summarize(news)
-    print("AI Summary:", summary)
-
-    # Step 2: Post to X if summary was successful
-    if not summary.startswith("Error"):
-        post_to_x(summary)
+# Run bot
+summary = summarize(news)
+print("AI Summary:", summary)
+if not summary.startswith("Error"):
+    post_to_x(summary)
