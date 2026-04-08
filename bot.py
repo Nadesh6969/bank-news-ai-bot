@@ -36,23 +36,23 @@ def summarize(text):
         print("Exception during summarize:", e)
         return "Error: Could not generate summary"
 
-def post_to_x(message):
-    # OAuth 1.0a authentication
+def post_to_x_v1(message):
+    # Tweepy v1.1 client
     auth = tweepy.OAuth1UserHandler(
         os.environ["TWITTER_API_KEY"],
         os.environ["TWITTER_API_SECRET"],
         os.environ["TWITTER_ACCESS_TOKEN"],
         os.environ["TWITTER_ACCESS_TOKEN_SECRET"]
     )
-    api = tweepy.API(auth)
+    api = tweepy.API(auth, wait_on_rate_limit=True)
     try:
-        api.update_status(message)
-        print("✅ Tweet posted successfully!")
-    except Exception as e:
+        api.update_status(status=message)
+        print("✅ Tweet posted successfully using v1.1!")
+    except tweepy.TweepyException as e:
         print("❌ Failed to post tweet:", e)
 
 # Run bot
 summary = summarize(news)
 print("AI Summary:", summary)
 if not summary.startswith("Error"):
-    post_to_x(summary)
+    post_to_x_v1(summary)
