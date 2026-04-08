@@ -4,7 +4,9 @@ import requests
 # -----------------------
 # Step 1: Dummy news
 # Replace this with real scraping later
-news = """
+news = "DBS Bank launches a new SME digital platform to improve financing access.
+OCBC expands its digital banking services to include AI-powered investment tools.
+UOB announces partnership with fintech startup for real-time payments."
 DBS Bank launches a new SME digital platform to improve financing access.
 OCBC expands its digital banking services to include AI-powered investment tools.
 UOB announces partnership with fintech startup for real-time payments.
