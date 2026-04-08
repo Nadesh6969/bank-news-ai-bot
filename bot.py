@@ -1,7 +1,7 @@
 import os
 import requests
 
-# Dummy banking news
+# Dummy banking news (replace with real scraping later)
 news = """
 DBS Bank launches a new SME digital platform to improve financing access.
 OCBC expands its digital banking services to include AI-powered investment tools.
@@ -25,11 +25,12 @@ def summarize(text):
             }
         )
         data = response.json()
-        # <-- CHECK FOR 'choices'
+        # Check for 'choices' to prevent crash
         if "choices" in data:
             return data["choices"][0]["message"]["content"]
         else:
-            print("❌ AI API returned error response:")
+            # Print the full API response for debugging
+            print("❌ AI API returned an error or unexpected response:")
             print(data)
             return "Error: Could not generate summary"
     except Exception as e:
